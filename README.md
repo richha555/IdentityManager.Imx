@@ -4,6 +4,16 @@
 
 ## Change log
 
+### May 24, 2024
+
+The v92 branch has been updated with fixes for the following issues.
+
+- 453132: Attestation Policies: Edit Attestation Policy: Setting Condition: The objects matching the condition are not displayed hierarchically
+- 449292: Fixed an issue during creation of a cart item
+- 455291: Fixed the output paths for the compodoc files
+- 453350: Fixed an issue where the user could not save dynamic role membership changes after adding another condition to a new role
+- 455703: Fixed a state issue of the save button during creation of a report
+
 ### May 6, 2024
 
 We are integrating [Compodoc](https://compodoc.app/) to provide Angular documentation for our components. Please see the [Documentation](#documentation) section for more information on how to generate documentation.
