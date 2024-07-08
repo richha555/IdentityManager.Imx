@@ -6,7 +6,7 @@
 
 ### July 3, 2024
 
-We have added a [list of changes from v91 to v92](doc/changes-v91-v92.md).
+We have added a [list of changes from v91 to v92](imxweb/changes/changesFrom9.1.1To9.2.0.md).
 
 The v92 branch has been updated with fixes for the following issues.
 
