@@ -42,9 +42,10 @@ import {
   LdsReplaceModule,
   QbmModule,
   TileModule,
+  RouteGuardService
 } from 'qbm';
 
-
+import { Routes, RouterModule } from '@angular/router';
 import { PatternItemService } from './pattern-item-list/pattern-item.service';
 import { PatternItemsModule } from './pattern-item-list/pattern-items.module';
 import { QerService } from './qer.service';
@@ -56,6 +57,7 @@ import { TilesModule } from './tiles/tiles.module';
 import { UserModule } from './user/user.module';
 import { BusinessOwnerChartSummaryComponent } from './wport/businessowner-chartsummary/businessowner-chartsummary.component';
 import { StartComponent } from './wport/start/start.component';
+import { SampleIdentitiesComponent } from './sample-identity/sample-identities/sample-identities.component';
 
 export function initConfig(config: QerService): () => Promise<any> {
   return () =>
@@ -67,12 +69,21 @@ export function initConfig(config: QerService): () => Promise<any> {
     });
 }
 
+const routes: Routes = [
+  {
+    path: 'identities',
+    component: SampleIdentitiesComponent,
+    canActivate: [RouteGuardService],
+    resolve: [RouteGuardService]
+  }
+];
+
 // @dynamic
 @NgModule({
   declarations: [
-    BusinessOwnerChartSummaryComponent, 
-    StartComponent, 
-    SettingsComponent,
+    BusinessOwnerChartSummaryComponent,
+    StartComponent,
+    SettingsComponent, SampleIdentitiesComponent,
   ],
   imports: [
     CommonModule,
@@ -106,6 +117,9 @@ export function initConfig(config: QerService): () => Promise<any> {
     },
     ServiceItemsService,
     PatternItemService,
+  ],
+  exports: [
+    SampleIdentitiesComponent
   ],
 })
 export class QerModule {
