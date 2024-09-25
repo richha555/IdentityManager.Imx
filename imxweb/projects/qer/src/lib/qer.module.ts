@@ -69,13 +69,14 @@ export function initConfig(config: QerService): () => Promise<any> {
     });
 }
 
+// routes are in:  D:\source\repos\IdentityManager.Imx\imxweb\projects\qer-app-portal\src\app\app-routing.module.ts
 const routes: Routes = [
   {
     path: 'identities',
     component: SampleIdentitiesComponent,
     canActivate: [RouteGuardService],
     resolve: [RouteGuardService]
-  }
+  },
 ];
 
 // @dynamic

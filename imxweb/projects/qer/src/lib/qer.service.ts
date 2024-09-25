@@ -26,7 +26,9 @@
 
 import { Injectable } from '@angular/core';
 
-import { ExtService } from 'qbm';
+import { ExtService,
+         MenuService
+ } from 'qbm';
 
 import { ObjectOverviewPersonComponent } from './ops/objectOverviewPerson.component';
 import { ShoppingCartValidationDetailService } from './shopping-cart-validation-detail/shopping-cart-validation-detail.service';
@@ -41,6 +43,7 @@ import { ProductDependencyCheckComponent } from './shopping-cart-validation-deta
 export class QerService {
   constructor(
     private extService: ExtService,
+    private readonly menuService: MenuService,
     private readonly validationDetailService: ShoppingCartValidationDetailService,
   ) { }
 
@@ -51,5 +54,27 @@ export class QerService {
     this.validationDetailService.register(ExclusionCheckComponent, 'ExclusionCheck');
     this.validationDetailService.register(DuplicateCheckComponent, 'DuplicateCheck');
     this.validationDetailService.register(ProductDependencyCheckComponent, 'ProductDependencyCheck');
+    this.setupMenu();
+  }
+
+  private setupMenu(): void {
+    this.menuService.addMenuFactories(
+    (preProps: string[], __: string[]) => {
+      if (!preProps.includes('ITSHOP')) {
+        return null;
+      }
+      return {
+        id: 'ROOT_SAMPLES',
+          title: '#LDS#Samples',
+          items: [
+            {
+              id: 'SAMPLE_IDENTITIES',
+              route: 'Identities',
+              title: '#LDS#Identities',
+            },
+          ],
+        };
+      },
+    );
   }
 }
