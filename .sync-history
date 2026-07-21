@@ -1,0 +1,2 @@
+8a5d78f15 2026-07-13 Merged PR 93367: 713184 - Web Portal: Optimize request history loading, optimize Pending Requests loading #713184
+793ca3335 2026-07-08 Merged PR 94402: #724361 - ATT: Fix attestation grouping crash on undefined groupedData

@@ -31,6 +31,7 @@ import { DecisionStepSevice } from '../../decision-step.service';
 import { WorkflowActionEdit } from '../workflow-action-edit.interface';
 import { Approval } from '../../approval';
 import { ApprovalsService } from '../../approvals.service';
+import { ValType } from 'imx-qbm-dbts';
 
 /**
  * @ignore since this is only an internal component.
@@ -82,6 +83,7 @@ export class WorkflowMultiActionComponent implements OnInit {
    * Sets up during OnInit lifecycle hook the bulk items and their {@link columns} to be displayed/edited for the requests.
    */
   public async ngOnInit(): Promise<void> {
+     this.stepService.isEscalationApprover = this.data.isInEscalationView ?? false;
     const isBusy = this.busyService.beginBusy();
     try {
       this.requests = await Promise.all(this.data.requests.map(async (item) => this.buildSingleItem(item)));
@@ -114,9 +116,13 @@ export class WorkflowMultiActionComponent implements OnInit {
       if (this.data.showValidDate.validFrom) {
         bulkItem.properties.push(new BaseReadonlyCdr(item.ValidFrom.Column));
       }
-      if (this.data.showValidDate.validUntil) {
+      if (this.data.showValidDate.validUntil && item.OrderState.value !== 'OrderProlongate') {
         bulkItem.properties.push(new BaseReadonlyCdr(item.ValidUntil.Column));
       }
+    }
+
+    if (item.ValidUntilProlongation?.value && item.OrderState.value === 'OrderProlongate') {
+      bulkItem.properties.push(new BaseCdr(item.ValidUntilProlongation.Column));
     }
 
     const step = this.stepService.getCurrentStepCdr(item, item.pwoData, '#LDS#Current approval step');
@@ -124,10 +130,23 @@ export class WorkflowMultiActionComponent implements OnInit {
       bulkItem.properties.unshift(step);
     }
 
+    const cRule = this.stepService.getAdditionalInfoCdr(item, item.pwoData, '#LDS#Compliance rule');
+    if (cRule != null) {
+      bulkItem.properties.unshift(cRule);
+    }
+
     if (item.parameterColumns) {
       const entityWrapper = await this.approvalService.getExtendedEntity(item.key);
       const interactiveColumns = entityWrapper.parameterCategoryColumns.map((item) => item.column);
-      interactiveColumns.forEach((pCol) => bulkItem.properties.push(this.data.approve ? new BaseCdr(pCol) : new BaseReadonlyCdr(pCol)));
+      interactiveColumns.forEach((pCol) => {
+          pCol.ColumnChanged.subscribe(() => {
+            const originalColumn = item.parameterColumns.find((elem) => elem.ColumnName === pCol.ColumnName);
+            if (originalColumn && originalColumn.GetMetadata().CanEdit()) {
+              originalColumn.PutValue(pCol.GetType() === ValType.Date ? new Date(pCol.GetValue()) : pCol.GetValue());
+            }
+          });
+        bulkItem.properties.push(this.data.approve ? new BaseCdr(pCol) : new BaseReadonlyCdr(pCol));
+      });
     }
 
     if (this.data.workflow) {
